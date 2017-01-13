@@ -140,6 +140,9 @@ public final class Vogar {
     @Option(names = { "--javac-arg" })
     List<String> javacArgs = new ArrayList<String>();
 
+    @Option(names = { "--jack-arg" })
+    List<String> jackArgs = new ArrayList<String>();
+
     @Option(names = { "--use-bootclasspath" })
     boolean useBootClasspath = false;
 
@@ -407,6 +410,9 @@ public final class Vogar {
         System.out.println("  --javac-arg <argument>: include the specified argument when invoking");
         System.out.println("      javac. Examples: --javac-arg -Xmaxerrs --javac-arg 1");
         System.out.println();
+        System.out.println("  --jack-arg <argument>: include the specified argument when invoking");
+        System.out.println("      jack. Examples: --jack-arg -D --jack-arg jack.assert.policy=always");
+        System.out.println();
         System.out.println("  --dalvik-cache <argument>: override default dalvik-cache location.");
         System.out.println("      Default is: " + dalvikCache);
         System.out.println();
@@ -553,6 +559,17 @@ public final class Vogar {
         if (debugApp && modeId != ModeId.ACTIVITY) {
             System.out.println("--debug-app can only be used in combination with --mode activity.");
             return false;
+        }
+
+        // When using --benchmark,
+        // caliper will spawn each benchmark as a new process (default dalvikvm).
+        //
+        // When using also --mode app_process, we want that new process to be app_process.
+        //
+        // Pass --vm app_process to it so that it knows not to use dalvikvm.
+        if ("app_process".equals(vmCommand) && benchmark) {
+          targetArgs.add("--vm");
+          targetArgs.add("app_process");
         }
 
         return true;
