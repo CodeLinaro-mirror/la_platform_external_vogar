@@ -32,25 +32,11 @@ public enum ModeId {
     /** (Target) app_process */
     APP_PROCESS;
 
-    // $BOOTCLASSPATH defined by system/core/rootdir/init.rc
-    // - DEVICE_JARS are appended automatically.
-    // (Intended for use with app_process and activities.)
-    // See PRODUCT_BOOT_JARS in build/make/target/product/core_tiny.mk
-    private static final String[] APP_JARS = new String[] {
-            "legacy-test",
-            "framework",
-            "telephony-common",
-            "voip-common",
-            "ims-common",
-            "org.apache.http.legacy.impl",
-            "android.hidl.base-V1.0-java",
-            "android.hidl.manager-V1.0-java"
-            // TODO: get this list programatically
-    };
-
-    // $BOOTCLASSPATH for art+libcore only.
-    // (Intended for use with dalvikvm only.)
-    // See TARGET_CORE_JARS in android/build/make/core/envsetup.mk
+    /**
+     * $BOOTCLASSPATH for art+libcore only.
+     * (Intended for use with dalvikvm only.)
+     * See TARGET_TEST_CORE_JARS in android/art/build/Android.common_path.mk
+     */
     private static final String[] DEVICE_JARS = new String[] {
             "core-oj",
             "core-libart",
@@ -58,13 +44,14 @@ public enum ModeId {
             "conscrypt",
             "okhttp",
             "bouncycastle",
-            "apache-xml"
+            "apache-xml",
     };
 
-    // $BOOTCLASSPATH for art+libcore only (host version).
-    // - Must be same as DEVICE_JARS + "hostdex" suffix.
-    // (Intended for use with dalvikvm only.)
-    // See HOST_CORE_JARS in android/build/make/core/envsetup.mk
+    /**
+     * $BOOTCLASSPATH for art+libcore only (host version).
+     * (Intended for use with dalvikvm only.)
+     * See HOST_TEST_CORE_JARS in android/art/build/Android.common_path.mk
+     */
     private static final String[] HOST_JARS = new String[] {
             "core-oj-hostdex",
             "core-libart-hostdex",
@@ -72,7 +59,30 @@ public enum ModeId {
             "conscrypt-hostdex",
             "okhttp-hostdex",
             "bouncycastle-hostdex",
-            "apache-xml-hostdex"
+            "apache-xml-hostdex",
+    };
+
+    /**
+     * $BOOTCLASSPATH defined by init.environ.rc on device.
+     *
+     * {@link #DEVICE_JARS} are prepended automatically in {@link #getJarNames()} so do not need to
+     * be listed below.
+     *
+     * (Intended for use with app_process and activities.)
+     *
+     * See also system/core/rootdir/init.environment.rc.in
+     * and PRODUCT_BOOT_JARS in build/make/target/product/base_system.mk for the build system
+     * generation.
+     */
+    private static final String[] APP_JARS = new String[] {
+            "ext",
+            "framework",
+            "telephony-common",
+            "voip-common",
+            "ims-common",
+            "framework-oahl-backward-compatibility",
+            "android.test.base.impl",
+            // TODO: get this list programatically
     };
 
     public boolean acceptsVmArgs() {
